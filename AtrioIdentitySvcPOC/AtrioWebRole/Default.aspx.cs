@@ -1,13 +1,17 @@
-﻿using System;
+﻿using AtrioIdentityMockSerice.DataContracts;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace AtrioWebRole
 {
@@ -27,6 +31,27 @@ namespace AtrioWebRole
 
             StreamReader reader = new StreamReader(stream);
             String response = reader.ReadToEnd();
+            PermissionSet permissionSet = Deserialize(response, typeof(PermissionSet)) as PermissionSet;
+            if (!permissionSet.Permessions.Contains("button1"))
+            {
+                Button1.Visible = false;
+            }
+            else if (!permissionSet.Permessions.Contains("button2"))
+            {
+                Button2.Visible = false;
+            }
+        }
+
+        public static object Deserialize(string xml, Type toType)
+        {
+            using (Stream stream = new MemoryStream())
+            {
+                byte[] data = System.Text.Encoding.UTF8.GetBytes(xml);
+                stream.Write(data, 0, data.Length);
+                stream.Position = 0;
+                DataContractSerializer deserializer = new DataContractSerializer(toType);
+                return deserializer.ReadObject(stream);
+            }
         }
 
         private  string GetTokenFromACS(string scope)
