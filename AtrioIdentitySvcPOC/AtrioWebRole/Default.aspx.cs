@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
+using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -19,6 +21,9 @@ namespace AtrioWebRole
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            ClaimsIdentity identity = Thread.CurrentPrincipal.Identity as ClaimsIdentity;
+            Claim nameClaim = identity.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);// Live ID does not give Email Claim Type.
+            
             string token = GetTokenFromACS("http://127.0.0.1:8080/AtrioIdentityService.svc");
             WebClient client = new WebClient();
 
@@ -27,16 +32,18 @@ namespace AtrioWebRole
             client.Headers.Add("Authorization", headerValue);
 
 
-            Stream stream = client.OpenRead(@"http://127.0.0.1:8080/AtrioIdentityService.svc/permissions/user/arunprasad.rn@hotmail.com");
+            Stream stream = client.OpenRead(string.Format(@"http://127.0.0.1:8080/AtrioIdentityService.svc/permissions/user/{0}", nameClaim.Value));
 
             StreamReader reader = new StreamReader(stream);
             String response = reader.ReadToEnd();
             PermissionSet permissionSet = Deserialize(response, typeof(PermissionSet)) as PermissionSet;
+            
             if (!permissionSet.Permessions.Contains("button1"))
             {
                 Button1.Visible = false;
             }
-            else if (!permissionSet.Permessions.Contains("button2"))
+            
+            if (!permissionSet.Permessions.Contains("button2"))
             {
                 Button2.Visible = false;
             }
@@ -54,7 +61,7 @@ namespace AtrioWebRole
             }
         }
 
-        private  string GetTokenFromACS(string scope)
+        private string GetTokenFromACS(string scope)
         {
             string wrapPassword = "P@ssw0rd";
             string wrapUsername = "atrioidentityservice";
