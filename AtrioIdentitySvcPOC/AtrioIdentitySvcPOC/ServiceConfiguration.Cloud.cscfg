@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="IdentityServicePOC1" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="3" osVersion="*" schemaVersion="2012-10.1.8">
+  <Role name="AtrioIdentityMockSerice">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="storageconnectionstring" value="DefaultEndpointsProtocol=https;AccountName=atrioidservice;AccountKey=g9uh89HkQlS4NM2ZrnQNzGVJtrzIhIUHM4oj2bo42DF+hcuWTs6cZzApsfV92XfbIhqM7qEnvRYIaA9k+PZGKQ==" />
+      <Setting name="realm" value="http://127.0.0.1:8080/AtrioIdentityService.svc" />
+      <Setting name="namespace" value="atrioidentityaccesspoc" />
+      <Setting name="key" value="uTWOBR0dif5pv2WYCpOIKg1RGD6MuwQpiBPHCjfxRuQ=" />
+    </ConfigurationSettings>
+  </Role>
+  <Role name="AtrioWebRole">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+    </ConfigurationSettings>
+  </Role>
+</ServiceConfiguration>
